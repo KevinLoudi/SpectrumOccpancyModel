@@ -1,0 +1,8 @@
+% Propose: generate a determinstic spectrum map with random field 'terrin'
+%   and random point process  "transmitter distribution"
+% Author: Kevin
+% Date: March 29th, 2017
+
+%% Generate terrin height as random field
+grids_num=51;
+[X,Y,Z]=Generate_random_field(grids_num)
