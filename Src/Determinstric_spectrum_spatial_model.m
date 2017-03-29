@@ -3,20 +3,15 @@
 % Author: Kevin
 % Date: March 29th, 2017
 
-clear; clc; close all;
-%% Generate terrin height as random field
-grids_num=51;
-[X,Y,Z]=Generate_random_field(grids_num);
-Z=Normalize(Z);
-figure(1);
-surf(X,Y,Z); view(2); colorbar;
 
-%% Generate random distributed transmitters
-trans_num=5;
-[trans_X, trans_Y]=Distribute_random_points(trans_num);
-figure(2);
-scatter(trans_X,trans_Y);
-
-%% Calculate radio propagation loss through ITU.P.R-1546 model
-
+%% Simulation of PU
+clear; clc;
+pu_info_obj.frequency=1800; %MHz carrier signal frequence
+pu_info_obj.trans_height=100; %m  transmitter effective antenna height 
+pu_info_obj.t_ratio=50; %50% Percentage time defined
+pu_info_obj.tca=10; %degree terrain clearance angle
+pu_info_obj.rec_height=5; %m  reciever antenna height
+pu_info_obj.path_type='Land';
+pu_info_obj.environment='dense';
+energy_mat=Simulation_primary_user_propagation(pu_info_obj,51,50);
 

@@ -3,6 +3,69 @@
 % Author: Kevin
 % Date: March 29th, 2017
 
+clear; clc; close all;
+addpath('...\\Tools\\itu_pr1546'); %ITU.P.R 1546 Model
+addpath('...\\SpectrumModel\\Include'); %Gobal methods
 %% Generate terrin height as random field
 grids_num=51;
-[X,Y,Z]=Generate_random_field(grids_num)
+[X,Y,Z]=Generate_random_field(grids_num);
+Z=Normalize(Z);
+Z=Z.*50; %max height--50m
+figure(1);
+surf(X,Y,Z); view(2); colorbar;
+
+%% Generate random distributed transmitters
+trans_num=2;
+[trans_X, trans_Y]=Distribute_random_points(trans_num);
+figure(2);
+scatter(trans_X,trans_Y);
+
+%% Calculate radio propagation loss through ITU.P.R-1546 model
+% Primary user power: 1kW
+pu_location=[trans_X(1,1), trans_Y(1,1)];
+%load X, Y in location matrix
+locations=cell(grids_num,grids_num);
+height=Z;
+energy=zeros(size(Z));
+distance_to_pu=zeros(grids_num,grids_num);
+for i=1:grids_num
+    for j=1:grids_num
+        locations{i,j}=[X(1,i),Y(j,1)];
+    end
+end
+
+%calculate distance of each grid to PU
+for i=1:grids_num
+    for j=1:grids_num
+        distance_to_pu(i,j)=Calculate_distance_by_latlon(locations{i,j},pu_location,'Haversine');
+    end
+end
+
+%calculate spectrum energy of each grid
+% distance=20; %km  trans to receiver distance
+frequency=1800; 
+trans_height=100; 
+terrin=50; 
+t_ratio=50; 
+tca=10; %degree terrain clearance angle
+rec_height=5; 
+path_type='Land';
+environment_type='dense';
+for i=1:grids_num
+    for j=1:grids_num
+        energy(i,j)=Calculate_propagation_loss(distance_to_pu(i,j),frequency,trans_height,height(i,j),t_ratio,tca,rec_height,'Land','dense');
+    end
+end
+figure(3);
+surf(X,Y,energy); view(2); colorbar;
+% 
+%% Simulation of PU
+pu_info_obj.frequency=1800; %MHz carrier signal frequence
+pu_info_obj.trans_height=100; %m  transmitter effective antenna height 
+pu_info_obj.t_ratio=50; %50% Percentage time defined
+pu_info_obj.tca=10; %degree terrain clearance angle
+pu_info_obj.rec_height=5; %m  reciever antenna height
+pu_info_obj.path_type='Land';
+pu_info_obj.environment='dense';
+energy_mat=Simulation_primary_user_propagation(pu_info_obj,51,average_terrin);
+
