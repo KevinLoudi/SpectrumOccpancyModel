@@ -41,29 +41,4 @@ BicTable=reshape(bic,max_p,max_q);
 [p,q]= ind2sub(size(BicTable),ind);
 d=0;
 
-%Residuals and Conditionall variances
-mod=arima('D',0,'Seasonality',season,'ARLags',p,'MALags',q);
-mod.Constant=constant;
-[Ew,Vw] = infer(mod,ts);
-figure;
-subplot(3,1,1);
-plot(Ew); title 'Inferred Residuals';
-
-subplot(3,1,2);
-plot(Vw,'r','LineWidth',2);
-hold on;
-plot(V);
-legend('Without Presample','With Presample');
-title 'Inferred Conditional Variances';
-hold off
-
-subplot(3,1,2);
-plot(Vw(1:5),'r','LineWidth',2);
-hold on;
-plot(V(1:5));
-legend('Without Presample','With Presample');
-title 'Beginning of Series';
-hold off
-
-
 end
