@@ -8,11 +8,11 @@
 %grids_num: grid number assigned
 %average_terrin: average heigh the map should have
 
-function [energy_mat,map_height]=Simulation_primary_user_propagation(pu_info_obj,grids_num...
+function [energy_mat,map_locations,map_height]=Simulation_primary_user_propagation(pu_info_obj,grids_num...
     ,average_terrin)
    %load dependencies
    addpath('D:\\Code\\WorkSpace\\SpectrumModel\\Tools\\itu_pr1546'); %ITU.P.R 1546 Model
-   addpath('D:\\Code\\WorkSpace\\SpectrumModel\\Include'); %Gobal methods
+   %addpath('D:\\Code\\WorkSpace\\SpectrumModel\\Include'); %Gobal methods
     
    %generate random terrin
    [X,Y,Z]=Generate_random_field(grids_num);

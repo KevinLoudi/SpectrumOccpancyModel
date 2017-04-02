@@ -57,6 +57,9 @@ for i=1:grid_num
         t=t+1;
     end
 end
+distance=reshape(distance,grid_num*grid_num,1);
+grid_x=grid_x';
+grid_y=grid_y';
 save(sprintf(path, 'StatGrids.mat'),'grid_x','grid_y','x', 'y','distance');
 
 end

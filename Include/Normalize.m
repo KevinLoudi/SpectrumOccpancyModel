@@ -7,7 +7,7 @@
 function [data_nor]=Normalize(data,t_min, t_max)
   [row,col]=size(data);
   %exception handling
-  if(row<2 || col<2)
+  if(row<2 & col<2)
       warning('No need to do normalize!!!');
       exit;
   end
