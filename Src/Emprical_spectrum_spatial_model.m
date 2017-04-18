@@ -4,6 +4,7 @@
 % Date: March 31th, 2017
 
 clear; clc; close all;
+addpath('D:\\Code\\WorkSpace\\SpectrumModel\\Include');
 spatial_data_Prepare();
 %% 
 % for process part, turn to .R file
@@ -21,9 +22,11 @@ figure;
 distance=reshape(distance,100,100);
 grid_x=Normalize(grid_x,0,1);
 grid_y=Normalize(grid_y,0,1);
-imagesc(grid_x,grid_y,distance);
-c=colorbar;
-ylabel(c,'距离/km','FontSize',12);
+contour(grid_x,grid_y,distance); hold on;
+[dis,ix]=min(distance);
+
+c=colorbar; colormap(gray);
+ylabel(c,'与发射塔的距离/m' ,'FontSize',12); 
 xlabel('相对经度','FontSize',12); ylabel('相对纬度','FontSize',12);
 set(gca,'XAxisLocation','top','YAxisLocation','left','ydir','reverse');
 path='D:/doc/PapaerLibrary/Figures/Draft_6_figs/spatial_distance';
@@ -38,15 +41,16 @@ idw_err=reshape(idw_err,100,100);
 
 figure;
 imagesc(grid_x,grid_y,idw_res);
-c=colorbar;
-ylabel(c,'频谱能量/dB\muV^{-1}','FontSize',12);
-xlabel('相对经度','FontSize',12); ylabel('相对纬度','FontSize',12);
-set(gca,'XAxisLocation','top','YAxisLocation','left','ydir','reverse');
 
-figure;
-imagesc(grid_x,grid_y,idw_err);
-c=colorbar;
-ylabel(c,'估计误差/(dB\muV^{-1})^{2}','FontSize',12);
+%set up grey level map
+caxis([0 max(idw_res(:))]);
+c=colorbar;  %alpha(0.5);  
+ colormap(gray); %colormap(flipud(colormap));
+cb = findobj(gcf,'Type','axes','Tag','Colorbar');
+cbIm = findobj(cb,'Type','image');
+alpha(cbIm,0.5);
+
+ylabel(c,'频谱能量/dB\muV^{-1}','FontSize',12);
 xlabel('相对经度','FontSize',12); ylabel('相对纬度','FontSize',12);
 set(gca,'XAxisLocation','top','YAxisLocation','left','ydir','reverse');
 

@@ -20,7 +20,7 @@ obs_data<-data.frame(x=sp_loc$Lon,y=sp_loc$Lat,sample=sp_data$StatData2,
 #create coordinates
 coordinates(obs_data)=~x+y
 #plot observed data
-bubble(obs_data,"sample",maxsize=1.5,main = "频谱能量密度分布",
+bubble(obs_data,"sample",maxsize=3,main = "频谱能量密度分布",
        xlab="经度", ylab="纬度",
        xlim=c(103, 105), ylim=c(29, 31))
 
@@ -30,27 +30,95 @@ pre_grid<-data.frame(x=sp_grid$x,y=sp_grid$y,distance=sp_grid$distance)
 coordinates(pre_grid)=~x+y
 gridded(pre_grid)=TRUE
 #show prediction-grid
-spplot(pre_grid)
+
+png(filename="D:/doc/PapaerLibrary/Figures/Draft_6_figs/spatial_distance.png",
+    width = 4, height = 4, units = 'in', res = 500)
+spplot(pre_grid,colorkey=TRUE)
+dev.off()
 title("与发射塔的距离")
 
 
 
 #see the spatial tendency
 library(gstat)
-plot(log(sample)~sqrt(distance),obs_data,xlab='平方根距离/sqrt(km)',ylab='对数频谱能量/log(dBuV/m)')
-abline(lm(log(sample)~sqrt(distance),obs_data))
+png(filename="D:/doc/PapaerLibrary/Figures/Draft_6_figs/spatial_decade.png",
+    width = 4, height = 4, units = 'in', res = 500)
+
+plot(sample~distance,obs_data,type="p",
+     xlab='Distance/km',ylab='Spectrum power density/dBuV/m')
+abline(lm(sample~distance,obs_data),dots)
+
+dev.off()
+
 #conduct IDW 
 res.idw=idw(sample~1,obs_data,pre_grid)
 class(res.idw)
-spplot(res.idw["var1.pred"],main="sample inverse distance")
+png(filename="D:/doc/PapaerLibrary/Figures/Draft_6_figs/spatial_idw.png",
+    width = 4, height = 4, units = 'in', res = 500)
+spplot(res.idw["var1.pred"],xlab="经度",ylab="纬度")
+dev.off()
 
 
 #calculate variograms of observed data
-res.vgm=variogram(sample~1,obs_data)
-res.vgm
-res.fit=fit.variogram(res.vgm, model = vgm(1,"Sph",0.05,1))
-res.fit
-plot(res.vgm,res.fit,xlab='经纬度棋盘距离')
+#res.vgm=variogram(sample~1,obs_data)
+#res.vgm
+#res.fit=fit.variogram(res.vgm, model = vgm(c("Exp", "Sph")))
+#res.fit
+#plot(res.vgm,res.fit,xlab='经纬度棋盘距离')
+
+#automaticly fit variograms to model
+library(automap)
+png(filename="D:/doc/PapaerLibrary/Figures/Draft_6_figs/spatial_direction.png",
+    width = 4, height = 4, units = 'in', res = 500)
+res.autofit = autofitVariogram(sample~1,obs_data,         #formula input_data
+                               model = c("Sph", "Exp", "Gau", "Mat"), #model list
+                               kappa = c(0.05, seq(0.2, 2, 0.1), 5, 10), #smoothing parameter of Matern model
+                               verbose = TRUE, #extra feedbacks on the fitting process
+                               miscFitOptions = list(merge.small.bins = TRUE), #Generalized Least Squares sample variogram is calculated
+                               alpha=c(0,45,90,135)) #additional control over the fitting process
+#plot(res.autofit)
+plot(res.autofit$exp_var)
+dev.off()
+
+#automaticly kriging prediction
+png(filename="D:/doc/PapaerLibrary/Figures/Draft_6_figs/spatial_krige.png",
+    width = 4, height = 4, units = 'in', res = 500)
+res.autokrige = autoKrige(sample~1,obs_data,
+                          model = c("Sph", "Exp", "Gau", "Ste"),
+                          kappa = c(0.05, seq(0.2, 2, 0.1), 5, 10),
+                          verbose = TRUE,
+                          miscFitOptions = list(merge.small.bins = TRUE))
+plot(res.autokrige)
+dev.off()
+
+
+#perform cross-validation
+res.autokrige.cv=autoKrige.cv(sample~1,obs_data,
+                              model = c("Sph"), nfold = 10)
+#mean_error: cross-validation residual,ideally small
+#me_mean: mean error divided by the mean of the observed values, measure for how large
+#   the mean_error is in contrast to the mean of the dataset
+#MSE: Mean Squared error
+#MSNE: Mean Squared Normalized Error, mean of the squared z-scores. Ideally small.
+#cor_obspred: Correlation between the observed and predicted values. Ideally 1.
+#cor_predres Correlation between the predicted and the residual values. Ideally 0.
+#RMSE Root Mean Squared Error of the residual. Ideally small.
+#RMSE_sd RMSE divided by the standard deviation of the observed values. Provides a
+#    measure variation of the residuals vs the variation of the observed values.
+#URMSE: Unbiased Root Mean Squared Error of the residual. Ideally small.
+#iqr:Interquartile Range of the residuals. Ideally small.
+library(ggplot2)
+compare.cv(res.autokrige.cv)
+
+#par(mfrow=c(1,2))
+#automapPlot(res.autokrige$krige_output, "var1.pred",
+#            sp.layout = list("sp.points", obs_data),
+#            xlab="经度",ylab="纬度",zlab="频谱能量密度",
+#            font.lab=12)
+
+#dev.print(device=png,"D:/doc/PapaerLibrary/Figures/Draft_6_figs/spatial_krige.png",
+#          width = 4, height = 4, units = 'in', res = 500)
+
 
 #calculate variogram against distance
 res.rvgm=variogram(log(sample)~sqrt(distance),obs_data)
@@ -85,7 +153,7 @@ spplot(res.condsim2, main="four conditional simulation")
 
 
 #directional variograms
-res.dir=variogram(log(sample)~1, obs_data,alpha=c(0,90,180,270))
+res.dir=variogram(sample~1, obs_data,alpha=c(0,45,90,135))
 res.dirfit=vgm(0.06,"Exp",0.08,0.002, anis=c(45,.4))
 plot(res.dir,res.dirfit,as.table=TRUE)
 
