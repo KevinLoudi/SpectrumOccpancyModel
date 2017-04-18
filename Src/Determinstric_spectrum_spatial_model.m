@@ -37,8 +37,9 @@ clabel(C,h);
 clabel(C,h,'FontSize',12,'Color','black');
 set(gca,'XAxisLocation','top','YAxisLocation','left','ydir','reverse');
 
-figure(2);
-imagesc(X,Y,energy_mat); c=colorbar;  ylabel('相对纬度' ,'FontSize',12); xlabel({['相对经度'],[]} ,'FontSize',12);  
+%% 
+figure;
+imagesc(X,Y,energy_mat); c=colorbar; colormap(grey);  ylabel('相对纬度' ,'FontSize',12); xlabel({['相对经度'],[]} ,'FontSize',12);  
 ylabel(c,'频谱能量/dB\muV^{-1}' ,'FontSize',12); axis equal; 
 set(gca,'XAxisLocation','top','YAxisLocation','left','ydir','reverse');
 
