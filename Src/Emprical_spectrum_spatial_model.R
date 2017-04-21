@@ -76,7 +76,7 @@ res.autofit = autofitVariogram(sample~1,obs_data,         #formula input_data
                                verbose = TRUE, #extra feedbacks on the fitting process
                                miscFitOptions = list(merge.small.bins = TRUE), #Generalized Least Squares sample variogram is calculated
                                alpha=c(0,45,90,135)) #additional control over the fitting process
-#plot(res.autofit)
+plot(res.autofit)
 plot(res.autofit$exp_var)
 dev.off()
 
