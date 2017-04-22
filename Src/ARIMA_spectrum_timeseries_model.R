@@ -165,3 +165,40 @@ sarima.for(xx, 24, 1,0,1,2,1,0,24)
 
 #native commend
 predict(mod2, n.ahead=24)
+
+#simulate arma and plot
+library(forecast)
+set.seed(12)
+
+arma_ar.sim<-arima.sim(list(order=c(1,0,0),ar=c(-0.6)),n=200)
+arma_ma.sim<-arima.sim(list(order=c(0,0,1),ma=c(-0.6)),n=200)
+
+par(mfrow=c(2,2))
+plot(arma_ar.sim,type="o",main="AR(1)",xlab="Lags",ylab="Value",
+     col = "dark red",
+     lwd = 0.5)
+sim_ar.acf<-acf(arma_ar.sim, ar.max=1,ma.max=0,main="ACF of AR(1)",
+                    xlab="Lags",ylab="ACF",lwd = 2,col = "blue")
+plot(arma_ma.sim,type="o",main="MA(1)",xlab="Lags",ylab="Value",
+     col = "dark red",
+     lwd = 0.5)
+sim_ma.acf<-acf(arma_ma.sim, ar.max=0,ma.max=1,main="ACF of MA(1)",
+                    xlab="Lags",ylab="ACF",lwd = 2,col = "blue")
+
+
+#Wold decomposition
+set.seed(20)
+len<-100
+drift<-0.5
+x0<-drift+rnorm(len)
+x<-cumsum(x0)
+trd<-1:100
+x.lm<-lm(x~trd)
+summary(x.lm)
+
+par(mfrow=c(3,1),cex.axis=1.5,cex.lab=1.5)
+plot(x,type="p",main="Fit time series",xlab="Time",ylab="Value",col = "dark red")
+lines(fitted.values(x.lm))
+plot(resid(x.lm),type="o",main="Residual",xlab="Time",ylab="Value")
+acf(resid(x.lm),main="ACF of residual",xlab="Lags",ylab="Value",lwd = 2,col = "blue")
+par(mfrow=c(1,1))

@@ -171,3 +171,8 @@ show.vgms(model="Mat",kappa.range = c(0.1,0.2,0.5,1,2,15,10,30),
 
 show.vgms(models = c("Exp", "Gau","Sph", "Mat"), nugget = 0.1,
           xlab='æ‡¿Î',ylab='∞Î±‰≤Ó÷µ')
+
+#plot vgm comparison figure
+library(gstat)
+plot(variogramLine(vgm(1, "Sph", 10, anis=c(0,0.5)), dir=c(0,1,0), dist_vector = 0.5))
+
