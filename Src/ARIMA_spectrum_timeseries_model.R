@@ -170,19 +170,19 @@ predict(mod2, n.ahead=24)
 library(forecast)
 set.seed(12)
 
-arma_ar.sim<-arima.sim(list(order=c(1,0,0),ar=c(-0.6)),n=200)
-arma_ma.sim<-arima.sim(list(order=c(0,0,1),ma=c(-0.6)),n=200)
+arma_ar.sim<-arima.sim(list(order=c(3,0,0),ar=c(-0.6,-0.3,-0.1)),n=200)
+arma_ma.sim<-arima.sim(list(order=c(0,0,3),ma=c(-0.6,-0.3,-0.1)),n=200)
 
 par(mfrow=c(2,2))
-plot(arma_ar.sim,type="o",main="AR(1)",xlab="Lags",ylab="Value",
+plot(arma_ar.sim,type="o",main="AR(3)",xlab="Lags",ylab="Value",
      col = "dark red",
      lwd = 0.5)
-sim_ar.acf<-acf(arma_ar.sim, ar.max=1,ma.max=0,main="ACF of AR(1)",
+sim_ar.acf<-acf(arma_ar.sim, ar.max=1,ma.max=0,main="ACF of AR(3)",
                     xlab="Lags",ylab="ACF",lwd = 2,col = "blue")
-plot(arma_ma.sim,type="o",main="MA(1)",xlab="Lags",ylab="Value",
+plot(arma_ma.sim,type="o",main="MA(3)",xlab="Lags",ylab="Value",
      col = "dark red",
      lwd = 0.5)
-sim_ma.acf<-acf(arma_ma.sim, ar.max=0,ma.max=1,main="ACF of MA(1)",
+sim_ma.acf<-pacf(arma_ma.sim, ar.max=0,ma.max=1,main="PACF of MA(3)",
                     xlab="Lags",ylab="ACF",lwd = 2,col = "blue")
 
 

@@ -173,6 +173,64 @@ show.vgms(models = c("Exp", "Gau","Sph", "Mat"), nugget = 0.1,
           xlab='æ‡¿Î',ylab='∞Î±‰≤Ó÷µ')
 
 #plot vgm comparison figure
-library(gstat)
-plot(variogramLine(vgm(1, "Sph", 10, anis=c(0,0.5)), dir=c(0,1,0), dist_vector = 0.5))
+library(sp)
+data(meuse)
+coordinates(meuse) = ~x+y
+vgm1 <- variogram(log(zinc)~1, meuse)
+plot(vgm1,type="p",lwd=2,pch="+",plot.numbers = TRUE)
+model.1 <- fit.variogram(vgm1,vgm(1,"Sph",300,1))
+plot(vgm1, model=model.1,main='Meuse data set (zinc)',
+     xlab="Distance",ylabe="Semi-variance",lwd = 2,col = "blue",
+     plot.numbers = FALSE,pch="+")
+
+
+plot(vgm1, plot.numbers = TRUE, pch = "+")
+vgm2 <- variogram(log(zinc)~1, meuse, alpha=c(0,45,90,135))
+plot(vgm2)
+# the following demonstrates plotting of directional models:
+model.2 <- vgm(.59,"Sph",926,.06,anis=c(0,0.3))
+plot(vgm2, model=model.2,lwd = 2,col = "blue",
+     xlab="Distance",ylab="Semivariance")
+g = gstat(NULL, "zinc < 200", I(zinc<200)~1, meuse)
+g = gstat(g, "zinc < 400", I(zinc<400)~1, meuse)
+g = gstat(g, "zinc < 800", I(zinc<800)~1, meuse)
+# calculate multivariable, directional variogram:
+v = variogram(g, alpha=c(0,45,90,135))
+plot(v, group.id = FALSE, auto.key = TRUE) # id and id pairs panels
+plot(v, group.id = TRUE, auto.key = TRUE) # direction panels
+# variogram maps:
+plot(variogram(g, cutoff=1000, width=100, map=TRUE),
+     main = "(cross) semivariance maps")
+plot(variogram(g, cutoff=1000, width=100, map=TRUE), np=TRUE,
+     main = "number of point pairs")
+
+
+#show varigram model
+#line style
+showLty <- function(ltys, xoff = 0, ...) {
+  stopifnot((n <- length(ltys)) >= 1)
+  op <- par(mar = rep(.5,4)); on.exit(par(op))
+  plot(0:1, 0:1, type = "n", axes = FALSE, ann = FALSE)
+  y <- (n:1)/(n+1)
+  clty <- as.character(ltys)
+  mytext <- function(x, y, txt)
+    text(x, y, txt, adj = c(0, -.3), cex = 0.8, ...)
+  abline(h = y, lty = ltys, ...); mytext(xoff, y, clty)
+  y <- y - 1/(3*(n+1))
+  abline(h = y, lty = ltys, lwd = 2, ...)
+  mytext(1/8+xoff, y, paste(clty," lwd = 2"))
+}
+
+showLty(c("solid", "dashed", "dotted", "dotdash"))
+par(new=TRUE)
+
+ltys=c("solid", "dashed", "dotted", "dotdash")
+Iwds=c(1.5,1.5,1.5,1.5)
+
+# shoe a group of variogram model
+show.vgms(models = c("Exp","Sph", "Mat", "Gau"), nugget = 0.1, max=5,plot=TRUE
+            ,lwd=1.5,col = "black",as.groups = FALSE,xlab="Distance",ylab="Semivariance")
+# show a set of Matern models with different smoothness:
+show.vgms(kappa.range = c(.1, .5, 1, 5), max = 10, nugget = 0.1, plot=TRUE,
+            as.groups = FALSE,xlab="Distance",ylab="Semivariance")
 
