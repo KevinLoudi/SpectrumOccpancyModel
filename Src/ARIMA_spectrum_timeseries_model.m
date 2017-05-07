@@ -8,14 +8,16 @@ addpath('D:\\Code\\WorkSpace\\SpectrumModel\\Include');
 %% Data pre-process
 [ts,time,ts_info]=time_series_Load('scr');
 time_num=datenum(time'); 
-figure; plot(time_num,ts,'--','Color','b','LineWidth',0.6); datetick; hold on;
+figure; 
+%plot(time_num,ts,'--','Color','b','LineWidth',0.6); datetick; hold on;
+scatter(time_num,ts,6,'filled'); hold on;
 [ts,time]=time_series_Refine(ts,time);
 time_num=datenum(time'); 
 plot(time_num,ts,'Color','g','LineWidth',0.6); datetick; hold off;
 xlabel('时间','FontSize',12); ylabel('SCR值','FontSize',12); legend('SCR序列','SCR-H序列','FontSize',12);
 
 path='D:/doc/PapaerLibrary/Figures/Draft_6_figs/scr_h';
-print(path,'-dpng','-r500');
+%print(path,'-dpng','-r500');
 %% 
 close all;
 [acf,pacf,d]=time_series_CorrAnalysis(ts,150);

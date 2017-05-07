@@ -19,12 +19,15 @@ function [p,q,d,BicTable]=time_series_choose_Order(ts, max_p, max_q, max_d, seas
  
  
  %estimate model with different ARMA order
-for p = 0:max_p
-    for q = 0:max_q
+%for p = 0:max_p
+ %   for q = 0:max_q
+ for p = 1:max_p
+    for q = 1:max_q
         if (p~=0)&&(q~=0)
            mod = arima('D',0,'Seasonality',season,'ARLags',p,'MALags',q);
         elseif(p==0)
-           mod = ar(Y, N)('D',0,'Seasonality',season,'MALags',q,'SMALags',1);
+           %mod = ar('D',0,'Seasonality',season,'MALags',q,'SMALags',1);
+           warning('Not implemented!!!');
         elseif(q==0)
            mod = arima('D',0,'Seasonality',season,'ARLags',p); 
         else

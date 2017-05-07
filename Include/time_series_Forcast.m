@@ -55,13 +55,13 @@ ForecastInt = [YF,YF] + 1.96*[-sqrt(YMSE), sqrt(YMSE)];
 %plot forcast results
 figure;
 h1 = plot(time_num,Y);
-title('{\bf Forecasted Monthly Passenger Totals}');
+%title('{\bf Forecasted Monthly Passenger Totals}');
 hold on
 h2 = plot(time_num(foreInds),YF,'Color','r','LineWidth',2);
 h3 = plot(time_num(foreInds), ForecastInt,'k--','LineWidth',2);
 datetick;
-legend([h1,h2,h3(1)],'Observations','MMSE Forecasts',...
-    '95% MMSE Forecast Intervals','Location','NorthWest');
+legend([h1,h2,h3(1)],'历史SCR-H序列','预测SCR-H序列',...
+    '95% 预测置信区间');
 axis tight;
 hold off;
 

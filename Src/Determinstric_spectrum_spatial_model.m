@@ -31,7 +31,9 @@ end
 x=reshape(X,grid_num,grid_num);
 y=reshape(Y,grid_num,grid_num);
 [C,h]=contour(x(:,1),y(1,:),map_height);  ylabel('相对纬度' ,'FontSize',12); xlabel({['相对经度'],[]} ,'FontSize',12); 
-c=colorbar; ylabel(c,'地形高度/m' ,'FontSize',12); 
+cmap=contrast(map_height); colormap(flipud(cmap));
+c=colorbar;
+ylabel(c,'地形高度/m' ,'FontSize',12); 
 axis equal ; 
 clabel(C,h);
 clabel(C,h,'FontSize',12,'Color','black');
@@ -39,17 +41,19 @@ set(gca,'XAxisLocation','top','YAxisLocation','left','ydir','reverse');
 
 %% 
 figure;
-imagesc(X,Y,energy_mat); c=colorbar; colormap(grey);  ylabel('相对纬度' ,'FontSize',12); xlabel({['相对经度'],[]} ,'FontSize',12);  
+imagesc(X,Y,energy_mat); 
+cmap=contrast(energy_mat); colormap(flipud(cmap));
+c=colorbar;   ylabel('相对纬度' ,'FontSize',12); xlabel({['相对经度'],[]} ,'FontSize',12);  
 ylabel(c,'频谱能量/dB\muV^{-1}' ,'FontSize',12); axis equal; 
 set(gca,'XAxisLocation','top','YAxisLocation','left','ydir','reverse');
 
 %% Save plot results
 figure(1);
-path='D:\\doc\\PapaerLibrary\\Figures\\Draft_6_figs\\spatial_determinstic_height';
-print(path,'-dpng','-r500');
+path='D:\\doc\\PapaerLibrary\\Figures\\Draft_6_figs\\spatial_determinstic_height_grey';
+%print(path,'-dpng','-r500');
 
 figure(2);
-path='D:\\doc\\PapaerLibrary\\Figures\\Draft_6_figs\\spatial_determinstic_results';
-print(path,'-dpng','-r500');
+path='D:\\doc\\PapaerLibrary\\Figures\\Draft_6_figs\\spatial_determinstic_results_grey';
+%print(path,'-dpng','-r500');
 
 

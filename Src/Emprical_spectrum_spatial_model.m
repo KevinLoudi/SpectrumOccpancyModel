@@ -30,7 +30,7 @@ ylabel(c,'与发射塔的距离/m' ,'FontSize',12);
 xlabel('相对经度','FontSize',12); ylabel('相对纬度','FontSize',12);
 set(gca,'XAxisLocation','top','YAxisLocation','left','ydir','reverse');
 path='D:/doc/PapaerLibrary/Figures/Draft_6_figs/spatial_distance';
-print(path,'-dpng','-r500');
+%print(path,'-dpng','-r500');
 
 %% IDW map
 path='D:\\Code\\WorkSpace\\SpectrumModel\\Datas';
@@ -43,9 +43,10 @@ figure;
 imagesc(grid_x,grid_y,idw_res);
 
 %set up grey level map
-caxis([0 max(idw_res(:))]);
+%caxis([0 max(idw_res(:))]);
+cmap=contrast(idw_res); colormap(flipud(cmap));
 c=colorbar;  %alpha(0.5);  
- colormap(gray); %colormap(flipud(colormap));
+%colormap(gray); %colormap(flipud(colormap));
 cb = findobj(gcf,'Type','axes','Tag','Colorbar');
 cbIm = findobj(cb,'Type','image');
 alpha(cbIm,0.5);
@@ -63,15 +64,18 @@ krige_err=reshape(krige_err,100,100);
 
 figure;
 imagesc(grid_x,grid_y,krige_res);
+cmap=contrast(krige_res); colormap(flipud(cmap));
 c=colorbar;
 ylabel(c,'频谱能量/dB\muV^{-1}','FontSize',12);
 xlabel('相对经度','FontSize',12); ylabel('相对纬度','FontSize',12);
 set(gca,'XAxisLocation','top','YAxisLocation','left','ydir','reverse');
 
 figure;
-imagesc(grid_x,grid_y,krige_err);
+krige_err_std=sqrt(krige_err);
+imagesc(grid_x,grid_y,krige_err_std);
+cmap=contrast(krige_err_std); colormap((cmap));
 c=colorbar;
-ylabel(c,'估计误差','FontSize',12);
+ylabel(c,'估计标准差','FontSize',12);
 xlabel('相对经度','FontSize',12); ylabel('相对纬度','FontSize',12);
 set(gca,'XAxisLocation','top','YAxisLocation','left','ydir','reverse');
 
@@ -80,11 +84,11 @@ set(gca,'XAxisLocation','top','YAxisLocation','left','ydir','reverse');
 path='D:/doc/PapaerLibrary/Figures/Draft_6_figs/spatial_distance';
 print(path,'-dpng','-r500');
 
-path='D:/doc/PapaerLibrary/Figures/Draft_6_figs/spatial_idw';
+path='D:/doc/PapaerLibrary/Figures/Draft_6_figs/spatial_idw_grey';
 print(path,'-dpng','-r500');
 
-path='D:/doc/PapaerLibrary/Figures/Draft_6_figs/spatial_krige';
+path='D:/doc/PapaerLibrary/Figures/Draft_6_figs/spatial_krige_grey';
 print(path,'-dpng','-r500');
 
-path='D:/doc/PapaerLibrary/Figures/Draft_6_figs/spatial_krige_err';
+path='D:/doc/PapaerLibrary/Figures/Draft_6_figs/spatial_krige_err_grey';
 print(path,'-dpng','-r500');
